@@ -1,4 +1,4 @@
 Snake
 =====
 
-Javascript snake version
+HTML5 snake version
