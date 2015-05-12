@@ -1,30 +1,45 @@
 <!DOCTYPE html>
 <html>
-
 <head>
-    <meta charset="utf-8" />
-    <title>HTML5 Snake Demo</title>
-    <style type="text/css">
-    body {
-        margin: 0;
-        padding: 0;
-    }
-    .wrapper {
-        margin: 50px auto;
-        width: 600px;
-        height: 600px;
-        border: 1px solid #ccc;
-    }
-    </style>
+	<meta charset="utf-8">
+	<title>HTML5 Snake Game</title> 
+	<style type="text/css">
+	canvas{
+		border: 1px solid #666;
+	}
+	</style>
 </head>
-
 <body>
-    <div class="wrapper">
-        <canvas id="myCanvas" width="600" height="600">
-            您的浏览器不支持canvas！
-        </canvas>
-    </div>
-    <script type="text/javascript" data-main="scripts/main" src="scripts/lib/require.js"></script>
-</body>
+	<canvas id="snakeCanvas" width="400" height="400"></canvas>
+	<script type="text/javascript">
+	var p = {x: 10, y: 10};
+	var snakeWidth = 10;
+	var snakeHeight = 10;
+	var snakeCanvas = document.getElementById('snakeCanvas');
+	var context = snakeCanvas.getContext('2d');
+	var requestAnimationFrame = window.requestAnimationFrame ||
+      window.webkitRequestAnimationFrame ||
+      window.mozRequestAnimationFrame;
+	// context.fillStyle = '#eeeeff';
+	// context.strokeRect(0,0, 400, 400);
 
+	//var timer = setInterval(moveSnake, 50);
+
+	function moveSnake() {
+		context.clearRect(0, 0, 400, 400)
+		context.fillStyle = 'red';
+		context.beginPath();
+		context.moveTo(p.x, p.y);
+		//context.clearRect(p.x, p.y, snakeWidth, snakeHeight);
+		p.x += 10; 
+		context.rect(p.x, p.y, snakeWidth, snakeHeight);
+		context.closePath();
+		context.fill();
+
+		requestAnimationFrame(moveSnake);
+	}
+
+	moveSnake();
+	</script>
+</body>
 </html>
