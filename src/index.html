@@ -11,35 +11,6 @@
 </head>
 <body>
 	<canvas id="snakeCanvas" width="400" height="400"></canvas>
-	<script type="text/javascript">
-	var p = {x: 10, y: 10};
-	var snakeWidth = 10;
-	var snakeHeight = 10;
-	var snakeCanvas = document.getElementById('snakeCanvas');
-	var context = snakeCanvas.getContext('2d');
-	var requestAnimationFrame = window.requestAnimationFrame ||
-      window.webkitRequestAnimationFrame ||
-      window.mozRequestAnimationFrame;
-	// context.fillStyle = '#eeeeff';
-	// context.strokeRect(0,0, 400, 400);
-
-	//var timer = setInterval(moveSnake, 50);
-
-	function moveSnake() {
-		context.clearRect(0, 0, 400, 400)
-		context.fillStyle = 'red';
-		context.beginPath();
-		context.moveTo(p.x, p.y);
-		//context.clearRect(p.x, p.y, snakeWidth, snakeHeight);
-		p.x += 10; 
-		context.rect(p.x, p.y, snakeWidth, snakeHeight);
-		context.closePath();
-		context.fill();
-
-		requestAnimationFrame(moveSnake);
-	}
-
-	moveSnake();
-	</script>
+	<script type="text/javascript" src="scripts/game.js"></script>
 </body>
 </html>

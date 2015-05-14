@@ -1,35 +1,48 @@
 var canvas = document.getElementById('snakeCanvas');
 var context = canvas.getContext('2d');
+var requestAnimationFrame = window.requestAnimationFrame ||
+    window.webkitRequestAnimationFrame ||
+    window.mozRequestAnimationFrame;
+
+var arrowkeys = {
+    37: 'left',
+    38: 'up',
+    39: 'right',
+    40: 'down'
+}
+
+var inverseDirection = {
+    'up': 'down',
+    'left': 'right',
+    'right': 'left',
+    'down': 'up'
+};
 
 var game = {
-    keys: {
-        up: [38, 75, 87],
-        down: [40, 74, 83],
-        left: [37, 65, 72],
-        right: [39, 68, 76],
-        start_game: [13, 32]
-    },
-    getKey: function (value) {
-        for (var key in keys) {
-            if (keys[key] instanceof Array && keys[key].indexOf(value) >= 0) {
-                return key;
-            }
-        }
-        return null;
-    },
+    over: true,
+    paused: false,
     init: function() {
         document.addEventListener("keydown", function(e) {
-            var lastKey = game.getKey(e.keyCode);
-            if (['up', 'down', 'left', 'right'].indexOf(lastKey) >= 0 && lastKey != inverseDirection[snake.direction]) {
-                snake.direction = lastKey;
-            } else if (['start_game'].indexOf(lastKey) >= 0 && game.over) {
+            var keyCode = e.keyCode;
+
+            if (arrowkeys[keyCode] && arrowkeys[keyCode] !== inverseDirection[game.snake.direction]) {
+                game.snake.direction = arrowkeys[keyCode];
+            }
+            // Enter key start
+            else if (keyCode === 13 && game.over) {
                 game.start();
+            }
+            // White space key pause 
+            else if (keyCode === 32) {
+                game.paused = !game.paused;
             }
         }, false);
     },
     start: function() {
         game.over = false;
+        game.paused = false;
         game.snake.init();
+        game.snake.draw();
         game.food.create();
     },
     stop: function() {
@@ -39,12 +52,20 @@ var game = {
         context.fillStyle = color;
         context.beginPath();
         context.moveTo(x, y);
-        context.rect(size, size);
+        context.rect(x, y, size, size);
         context.closePath();
         context.fill();
     },
     resetCanvas: function() {
         context.clearRect(0, 0, canvas.width, canvas.height);
+    },
+    loop: function() {
+        if (!game.over && !game.paused) {
+            game.resetCanvas();
+            snake.move();
+            food.create();
+            snake.draw();
+        }
     },
     snake: {
         size: 20,
@@ -113,26 +134,27 @@ var game = {
         tryEat: function() {
             if (game.snake.x == food.x && game.snake.y == food.y) {
                 game.food.create();
-            } else {
+            }
+            else {
                 game.snake.nodes.pop();
             }
         },
         draw: function() {
-            var sections = game.snake.nodes;
-            var length = sections.length;
-
-            for (var i = 0; i < length; i++) {
-                game.drawRect(sections[i].x, sections[i].y, game.snake.size, game.snake.color);
-            }
+            game.snake.nodes.forEach(function(node) {
+                game.drawRect(node.x, node.y, game.snake.size, game.snake.color);
+            });
         }
     },
     food: {
         color: '#0ff',
         create: function() {
             game.food.size = game.snake.size;
-            game.food.x = (Math.ceil(Math.random() * 10) * snake.size * 4) - snake.size / 2;
-            game.food.y = (Math.ceil(Math.random() * 10) * snake.size * 3) - snake.size / 2;
-            game.drawRect(food.x, food.y, food.size, food.color);
+            game.food.x = (Math.ceil(Math.random() * 10) * game.snake.size * 4) - game.snake.size / 2;
+            game.food.y = (Math.ceil(Math.random() * 10) * game.snake.size * 3) - game.snake.size / 2;
+            game.drawRect(game.food.x, game.food.y, game.food.size, game.food.color);
         }
     }
 };
+
+game.init();
+requestAnimationFrame(game.loop);
