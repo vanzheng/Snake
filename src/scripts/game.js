@@ -1,8 +1,19 @@
 var canvas = document.getElementById('snakeCanvas');
 var context = canvas.getContext('2d');
+
 var requestAnimationFrame = window.requestAnimationFrame ||
-    window.webkitRequestAnimationFrame ||
-    window.mozRequestAnimationFrame;
+                            window.mozRequestAnimationFrame ||
+                            window.webkitRequestAnimationFrame ||
+                            window.msRequestAnimationFrame || 
+                            window.oRequestAnimationFrame;
+                            
+var cancelAnimationFrame =  window.cancelAnimationFrame ||
+                            window.mozCancelAnimationFrame ||
+                            window.webkitCancelAnimationFrame ||
+                            window.msCancelAnimationFrame || 
+                            window.oCancelAnimationFrame;
+
+
 var game, panel, snake, food;
 
 game = {
@@ -43,9 +54,13 @@ game = {
         snake.draw();
         food.random();
         food.draw();
-        requestAnimationFrame(game.animate);
+        game.timer = requestAnimationFrame(game.animate);
     },
     stop: function() {
+        if (game.timer) {
+            cancelAnimationFrame(game.timer);
+        }
+        
         game.over = true;
     },
     animate: function() {
@@ -57,7 +72,7 @@ game = {
         }
 
         setTimeout(function() {
-            requestAnimationFrame(game.animate);
+            game.timer = requestAnimationFrame(game.animate);
         }, 1000 / game.fps);
     },
     events: {
