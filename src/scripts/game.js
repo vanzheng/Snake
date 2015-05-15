@@ -44,17 +44,14 @@ var game = {
         game.snake.init();
         game.snake.draw();
         game.food.create();
+        requestAnimationFrame(game.loop);
     },
     stop: function() {
         game.over = true;
     },
     drawRect: function(x, y, size, color) {
         context.fillStyle = color;
-        context.beginPath();
-        context.moveTo(x, y);
-        context.rect(x, y, size, size);
-        context.closePath();
-        context.fill();
+        context.fillRect(x, y, size, size);
     },
     resetCanvas: function() {
         context.clearRect(0, 0, canvas.width, canvas.height);
@@ -62,30 +59,31 @@ var game = {
     loop: function() {
         if (!game.over && !game.paused) {
             game.resetCanvas();
-            snake.move();
-            food.create();
-            snake.draw();
+            game.snake.move();
+            game.food.create();
+            game.snake.draw();
         }
+
+        requestAnimationFrame(game.loop);
     },
     snake: {
-        size: 20,
+        size: 10,
         direction: 'left',
         color: '#0F0',
         nodes: [],
         init: function() {
-            var p = {};
-
+            var px, py;
             game.snake.direction = 'left';
             game.snake.nodes = [];
 
-            game.snake.x = p.x = canvas.width / 2;
-            game.snake.y = p.y = canvas.height / 2;
-            game.snake.nodes.push(p);
+            game.snake.x = canvas.width / 2;
+            game.snake.y = canvas.height / 2;
+            game.snake.nodes.push({x: game.snake.x, y: game.snake.y});
 
             for (var i = 0; i < 3; i++) {
-                p.x = game.snake.x + game.snake.size * (i + 1);
-                p.y = game.snake.y;
-                game.snake.nodes.push(p);
+                px = game.snake.x + game.snake.size * (i + 1);
+                py = game.snake.y;
+                game.snake.nodes.push({x: px, y: py});
             }
         },
         move: function() {
@@ -122,8 +120,8 @@ var game = {
             }
 
             // 碰到自己
-            for (var i = 0, j = snake.nodes.length; i < j; i++) {
-                if (snake.nodes[i].x == x && snake.nodes[i].y == y) {
+            for (var i = 0, j = game.snake.nodes.length; i < j; i++) {
+                if (game.snake.nodes[i].x === p.x && game.snake.nodes[i].y === y) {
                     return true;
                 }
             }
@@ -132,7 +130,7 @@ var game = {
         },
         // 检测是否吃到食物
         tryEat: function() {
-            if (game.snake.x == food.x && game.snake.y == food.y) {
+            if (game.snake.x == game.food.x && game.snake.y == game.food.y) {
                 game.food.create();
             }
             else {
@@ -149,12 +147,12 @@ var game = {
         color: '#0ff',
         create: function() {
             game.food.size = game.snake.size;
-            game.food.x = (Math.ceil(Math.random() * 10) * game.snake.size * 4) - game.snake.size / 2;
-            game.food.y = (Math.ceil(Math.random() * 10) * game.snake.size * 3) - game.snake.size / 2;
+            game.food.x = Math.ceil(Math.random() * 10) * game.snake.size * 4;
+            game.food.y = Math.ceil(Math.random() * 10) * game.snake.size * 4;
             game.drawRect(game.food.x, game.food.y, game.food.size, game.food.color);
         }
     }
 };
 
 game.init();
-requestAnimationFrame(game.loop);
+//requestAnimationFrame(game.loop);
