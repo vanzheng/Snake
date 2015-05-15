@@ -2,22 +2,22 @@ var canvas = document.getElementById('snakeCanvas');
 var context = canvas.getContext('2d');
 
 var requestAnimationFrame = window.requestAnimationFrame ||
-                            window.mozRequestAnimationFrame ||
-                            window.webkitRequestAnimationFrame ||
-                            window.msRequestAnimationFrame || 
-                            window.oRequestAnimationFrame;
-                            
-var cancelAnimationFrame =  window.cancelAnimationFrame ||
-                            window.mozCancelAnimationFrame ||
-                            window.webkitCancelAnimationFrame ||
-                            window.msCancelAnimationFrame || 
-                            window.oCancelAnimationFrame;
+    window.mozRequestAnimationFrame ||
+    window.webkitRequestAnimationFrame ||
+    window.msRequestAnimationFrame ||
+    window.oRequestAnimationFrame;
+
+var cancelAnimationFrame = window.cancelAnimationFrame ||
+    window.mozCancelAnimationFrame ||
+    window.webkitCancelAnimationFrame ||
+    window.msCancelAnimationFrame ||
+    window.oCancelAnimationFrame;
 
 
 var game, panel, snake, food;
 
 game = {
-    fps: 20,
+    fps: 10,
     over: true,
     paused: false,
     score: 0,
@@ -35,33 +35,45 @@ game = {
     },
     init: function() {
         game.initControls();
-        game.controls.btnStartGame.addEventListener('click', game.events.startGame, false);
-        game.controls.btnPauseGame.addEventListener('click', game.events.pauseGame, false);
+        game.controls.btnStartGame.addEventListener('click', game.start, false);
+        game.controls.btnPauseGame.addEventListener('click', game.pause, false);
+        game.controls.btnResumeGame.addEventListener('click', game.resume, false);
         document.addEventListener("keydown", game.events.onkeydown, false);
     },
     initControls: function() {
         game.controls = {
             btnStartGame: document.getElementById('startGame'),
             btnPauseGame: document.getElementById('pauseGame'),
+            btnResumeGame: document.getElementById('resumeGame'),
             gameScore: document.getElementById('gameScore')
         }
     },
     start: function() {
-        game.score = 0;
-        game.over = false;
-        game.paused = false;
-        snake.init();
-        snake.draw();
-        food.random();
-        food.draw();
-        game.timer = requestAnimationFrame(game.animate);
+        if (game.over) {
+            game.score = 0;
+            game.controls.gameScore.innerText = game.score;
+            game.over = false;
+            game.paused = false;
+            panel.resetCanvas();
+            snake.init();
+            snake.draw();
+            food.random();
+            food.draw();
+        }
+    },
+    pause: function() {
+        if (!game.over) {
+            game.paused = true;
+        }
+    },
+    resume: function() {
+        if (!game.over) {
+            game.paused = false;
+        }
     },
     stop: function() {
-        if (game.timer) {
-            cancelAnimationFrame(game.timer);
-        }
-        
         game.over = true;
+        game.paused = false;
     },
     animate: function() {
         if (!game.over && !game.paused) {
@@ -86,12 +98,6 @@ game = {
             else if (keyCode === 13 && game.over) {
                 game.start();
             }
-        },
-        startGame: function(e) {
-            game.start();
-        },
-        pauseGame: function(e) {
-            game.paused = true;
         }
     }
 };
@@ -161,7 +167,7 @@ snake = {
     },
     isCollision: function(p) {
         // 超出画布背景
-        if (p.x < 0 || p.y < 0 || p.x > canvas.width || p.y + snake.size > canvas.height) {
+        if (p.x < 0 || p.y < 0 || p.x + snake.size > canvas.width || p.y + snake.size > canvas.height) {
             game.stop();
             return true;
         }
@@ -182,7 +188,8 @@ snake = {
             food.random();
             game.score++;
             game.controls.gameScore.innerText = game.score;
-        } else {
+        }
+        else {
             snake.nodes.pop();
         }
     },
@@ -195,7 +202,7 @@ snake = {
 
 food = {
     size: snake.size,
-    color: '#0ff',
+    color: '#0FF',
     random: function() {
         food.set();
         food.checkOverlap();
@@ -221,3 +228,4 @@ food = {
 }
 
 game.init();
+requestAnimationFrame(game.animate);

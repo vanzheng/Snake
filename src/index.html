@@ -1,19 +1,27 @@
 <!DOCTYPE html>
 <html>
+
 <head>
-	<meta charset="utf-8">
-	<title>HTML5 Snake Game</title> 
-	<style type="text/css">
-	canvas{
-		border: 1px solid #666;
-	}
-	</style>
+    <meta charset="utf-8">
+    <title>HTML5 Snake Game</title>
+    <style type="text/css">
+    canvas {
+        border: 1px solid #666;
+    }
+    </style>
 </head>
+
 <body>
-	<p>按回车键或点击下面开始按钮开始。</p>
-	<canvas id="snakeCanvas" width="400" height="400"></canvas>
-	<p>score: <span id="gameScore">0</span></p>
-	<div><input type="button" value="Start" id="startGame" />&nbsp;<input type="button" value="Pause" id="pauseGame" /></div>
-	<script type="text/javascript" src="scripts/game.js"></script>
+    <p>按回车键或点击下面开始按钮开始。</p>
+    <canvas id="snakeCanvas" width="400" height="400"></canvas>
+    <p>分数: <span id="gameScore">0</span>
+    </p>
+    <div>
+        <input type="button" value="开始" id="startGame" />&nbsp;
+        <input type="button" value="暂停" id="pauseGame" />&nbsp;
+        <input type="button" value="恢复" id="resumeGame" />
+    </div>
+    <script type="text/javascript" src="scripts/game.js"></script>
 </body>
+
 </html>
