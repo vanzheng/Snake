@@ -9,6 +9,7 @@ game = {
     fps: 20,
     over: true,
     paused: false,
+    score: 0,
     keys: {
         37: 'left',
         38: 'up',
@@ -30,10 +31,12 @@ game = {
     initControls: function() {
         game.controls = {
             btnStartGame: document.getElementById('startGame'),
-            btnPauseGame: document.getElementById('pauseGame')
+            btnPauseGame: document.getElementById('pauseGame'),
+            gameScore: document.getElementById('gameScore')
         }
     },
     start: function() {
+        game.score = 0;
         game.over = false;
         game.paused = false;
         snake.init();
@@ -144,14 +147,14 @@ snake = {
     isCollision: function(p) {
         // 超出画布背景
         if (p.x < 0 || p.y < 0 || p.x > canvas.width || p.y + snake.size > canvas.height) {
-            game.over = true;
+            game.stop();
             return true;
         }
 
         // 碰到自己
         for (var i = 0, j = snake.nodes.length; i < j; i++) {
             if (snake.nodes[i].x === p.x && snake.nodes[i].y === p.y) {
-                game.over = true;
+                game.stop();
                 return true;
             }
         }
@@ -162,6 +165,8 @@ snake = {
     grow: function() {
         if (snake.x == food.x && snake.y == food.y) {
             food.random();
+            game.score++;
+            game.controls.gameScore.innerText = game.score;
         } else {
             snake.nodes.pop();
         }
